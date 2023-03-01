@@ -9,6 +9,7 @@ blp = Blueprint("stores", __name__, description="Operations on stores")
 
 @blp.route("/stores/<string:store_id>")
 class Store(MethodView):
+    @blp.response(200, StoreSchema)
     def get(self, store_id):
         try:
             return stores[store_id], 200
@@ -25,10 +26,12 @@ class Store(MethodView):
 
 @blp.route("/stores")
 class StoreList(MethodView):
+    @blp.response(200, StoreSchema(many=True))
     def get(self):
-        return {"stores": list(stores.values())}
+        return list(stores.values())
 
     @blp.arguments(StoreSchema)
+    @blp.response(200, StoreSchema)
     def post(self, store_data):
         store_id = uuid.uuid4().hex
         store = {**store_data, "id": store_id}
