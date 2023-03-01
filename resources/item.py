@@ -1,51 +1,51 @@
-import uuid
 from flask.views import MethodView
 from flask_smorest import Blueprint, abort
-from db import items
 from schemas import ItemSchema, ItemUpdateSchema
+from sqlalchemy.exc import SQLAlchemyError
+from services import ItemService
 
 blp = Blueprint("items", __name__, description="Operations on items")
 
 
-@blp.route("/items/<string:item_id>")
+@blp.route("/items/<int:item_id>")
 class Item(MethodView):
     @blp.response(200, ItemSchema)
     def get(self, item_id):
         try:
-            return items[item_id], 200
-        except KeyError:
-            abort(404, message="Item not found")
+            return ItemService.get_item_by_id(item_id), 200
+        except SQLAlchemyError:
+            abort(500, message="Something went wrong")
 
     def delete(self, item_id):
         try:
-            del items[item_id]
-            return {"message": "Item deleted"}
-        except KeyError:
-            abort(404, message="Item not found")
+            ItemService.delete_item_by_id(item_id)
+
+            return {"message": "Item has been deleted"}, 200
+        except SQLAlchemyError:
+            abort(500, message="Something went wrong")
 
     @blp.arguments(ItemUpdateSchema)
     @blp.response(200, ItemSchema)
     def put(self, item_data, item_id):
         try:
-            item = items[item_id]
-            item |= item_data
-
-            return item, 200
-        except:
-            abort(404, message="Item not found")
+            return ItemService.update_item_by_id(item_id, item_data), 200
+        except SQLAlchemyError:
+            abort(500, message="Something went wrong")
 
 
 @blp.route("/items")
 class ItemList(MethodView):
     @blp.response(200, ItemSchema(many=True))
     def get(self):
-        return list(items.values())
+        try:
+            return ItemService.get_all_items(), 200
+        except SQLAlchemyError:
+            abort(500, message="Something went wrong")
 
     @blp.arguments(ItemSchema)
-    @blp.response(200, ItemSchema)
+    @blp.response(201, ItemSchema)
     def post(self, item_data):
-        item_id = uuid.uuid4().hex
-        item = {**item_data, "id": item_id}
-        items[item_id] = item
-
-        return item
+        try:
+            return ItemService.create_item(item_data), 201
+        except SQLAlchemyError:
+            abort(500, message="Something went wrong")
