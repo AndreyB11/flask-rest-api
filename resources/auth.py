@@ -1,12 +1,13 @@
 from flask.views import MethodView
 from flask_smorest import Blueprint, abort
+from flask import current_app
 from sqlalchemy.exc import SQLAlchemyError, IntegrityError
 
-from services import AuthService
+from services import AuthService, EmailService
 from schemas import UserRegisterSchema, UserLoginSchema
 from exceptions import InvalidUsage
 from flask_jwt_extended import jwt_required, get_jwt
-
+from tasks import send_user_registration_email
 
 blp = Blueprint("auth", __name__, description="Operations on auth")
 
@@ -17,7 +18,12 @@ class AuthRegister(MethodView):
     @blp.response(201, UserRegisterSchema)
     def post(self, user_data):
         try:
-            return AuthService.register_user(user_data), 201
+            user = AuthService.register_user(user_data)
+
+            current_app.queue.enqueue(
+                send_user_registration_email, user.email, user.username)
+
+            return user, 201
         except IntegrityError:
             abort(400, message="User already exists")
         except SQLAlchemyError:
