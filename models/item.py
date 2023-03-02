@@ -1,4 +1,5 @@
 from db import db
+from datetime import datetime
 
 
 class ItemModel(db.Model):
@@ -11,3 +12,5 @@ class ItemModel(db.Model):
         "stores.id"), nullable=False)
     store = db.relationship(
         "StoreModel", back_populates="items")
+    created_at = db.Column(db.DateTime, nullable=False,
+                           default=datetime.utcnow)

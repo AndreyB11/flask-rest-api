@@ -1,4 +1,5 @@
 from db import db
+from datetime import datetime
 
 
 class UserModel(db.Model):
@@ -8,3 +9,5 @@ class UserModel(db.Model):
     email = db.Column(db.String(250), unique=True, nullable=False)
     username = db.Column(db.String(80), nullable=False)
     password = db.Column(db.String(250), nullable=False)
+    created_at = db.Column(db.DateTime, nullable=False,
+                           default=datetime.utcnow)
