@@ -29,3 +29,5 @@ class StoreService():
 
         db.session.delete(store)
         db.session.commit()
+
+        return store

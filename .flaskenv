@@ -1,3 +1,4 @@
 FLASK_APP=app
 FLASK_DEBUG=1
 DATABASE_URL=sqlite:///data.db
+JWT_SECRET=a1s2d3

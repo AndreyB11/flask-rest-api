@@ -24,3 +24,17 @@ class ItemSchema(PlainItemSchema):
 
 class StoreSchema(PlainStoreSchema):
     items = fields.List(fields.Nested(PlainItemSchema()), dump_only=True)
+
+
+class PlainAuthSchema(Schema):
+    id = fields.Int(dump_only=True)
+    email = fields.Str(required=True)
+    password = fields.Str(required=True, load_only=True)
+
+
+class UserLoginSchema(PlainAuthSchema):
+    access_token = fields.Str(dump_only=True)
+
+
+class UserRegisterSchema(PlainAuthSchema):
+    username = fields.Str(required=True)
