@@ -6,7 +6,7 @@
 
 ### How to run in docker (develop):
 
-- `docker run -p 5000:5000 -w /app -v "$(pwd):/app" flask-rest-api`
+- `docker run -p 5000:5000 -w /app -v "$(pwd):/app" flask-rest-api sh -c "flask run --host 0.0.0.0"`
 
 ### How to run in docker (production):
 
