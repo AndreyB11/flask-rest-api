@@ -5,6 +5,7 @@ from sqlalchemy.exc import SQLAlchemyError, IntegrityError
 from services import AuthService
 from schemas import UserRegisterSchema, UserLoginSchema
 from exceptions import InvalidUsage
+from flask_jwt_extended import jwt_required, get_jwt
 
 
 blp = Blueprint("auth", __name__, description="Operations on auth")
@@ -30,6 +31,20 @@ class AuthLogin(MethodView):
     def post(self, user_data):
         try:
             return AuthService.login_user_by_email(user_data), 200
+        except InvalidUsage as err:
+            abort(err.status_code, message=err.message)
+        except SQLAlchemyError:
+            abort(500, message="Something went wrong")
+
+
+@blp.route("/auth/logout")
+class AuthLogin(MethodView):
+    @jwt_required()
+    def put(self):
+        try:
+            AuthService.logout(get_jwt()["jti"])
+
+            return {"message": "Logout successful"}, 200
         except InvalidUsage as err:
             abort(err.status_code, message=err.message)
         except SQLAlchemyError:

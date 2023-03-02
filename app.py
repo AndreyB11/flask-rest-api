@@ -4,12 +4,25 @@ from flask_smorest import Api
 from flask_jwt_extended import JWTManager
 
 from db import db
+from blocklist import BLOCKLIST
 import models
 
 from resources import ItemBlueprint, StoreBlueprint, AuthBlueprint
 
 
 def configure_jwt(jwt: JWTManager):
+    @jwt.token_in_blocklist_loader
+    def check_token_in_blocklist(jwt_header, jwt_payload):
+        return jwt_payload["jti"] in BLOCKLIST
+
+    @jwt.revoked_token_loader
+    def revoked_token_cb(jwt_header, jwt_payload):
+        return (
+            jsonify({"message": "Signature verification failed",
+                    "error": "invalid_token"}),
+            401
+        )
+
     @jwt.expired_token_loader
     def expired_token_cb(jwt_header, jwt_payload):
         return (

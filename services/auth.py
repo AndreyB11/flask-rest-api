@@ -3,6 +3,7 @@ from models import UserModel
 from passlib.hash import pbkdf2_sha256
 from flask_jwt_extended import create_access_token
 from exceptions import InvalidUsage
+from blocklist import BLOCKLIST
 
 
 class AuthService():
@@ -27,3 +28,7 @@ class AuthService():
             return {**user.__dict__, "access_token": access_token}
 
         raise InvalidUsage("Email or password are not valid", 401)
+
+    @staticmethod
+    def logout(jti):
+        BLOCKLIST.add(jti)
