@@ -15,3 +15,12 @@
 ### How to run in docker (production):
 
 - `docker run -dp 5000:5000`
+
+### Run DB migration
+
+- `flask db migrate`
+- `flask db upgrade`
+
+### Run locally (no docker)
+
+- `flask run`

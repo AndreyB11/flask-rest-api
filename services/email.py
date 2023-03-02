@@ -4,7 +4,7 @@ import os
 
 class EmailService():
     @staticmethod
-    def send_email(to, subject: str, body: str):
+    def send_email(to, subject: str, body: str, html):
         domain = os.getenv("MAILGUN_DOMAIN")
 
         return requests.post(
@@ -13,4 +13,6 @@ class EmailService():
             data={"from": f"FlaskAPI Admin <mailgun@{domain}>",
                   "to": [to],
                   "subject": subject,
-                  "text": body})
+                  "text": body,
+                  "html": html
+                  })
