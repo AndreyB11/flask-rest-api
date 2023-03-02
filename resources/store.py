@@ -3,13 +3,16 @@ from flask_smorest import Blueprint, abort
 from schemas import StoreSchema
 from services import StoreService
 from sqlalchemy.exc import SQLAlchemyError, IntegrityError
+from flask_jwt_extended import jwt_required
 
 
 blp = Blueprint("stores", __name__, description="Operations on stores")
 
 
 @blp.route("/stores/<int:store_id>")
+@jwt_required()
 class Store(MethodView):
+    @jwt_required()
     @blp.response(200, StoreSchema)
     def get(self, store_id):
         try:
@@ -17,6 +20,7 @@ class Store(MethodView):
         except SQLAlchemyError:
             abort(500, message="Something went wrong")
 
+    @jwt_required()
     def delete(self, store_id):
         try:
             StoreService.delete_store_by_id(store_id)
@@ -28,6 +32,7 @@ class Store(MethodView):
 
 @blp.route("/stores")
 class StoreList(MethodView):
+    @jwt_required()
     @blp.response(200, StoreSchema(many=True))
     def get(self):
         try:
@@ -35,6 +40,7 @@ class StoreList(MethodView):
         except SQLAlchemyError:
             abort(500, message="Something went wrong")
 
+    @jwt_required()
     @blp.arguments(StoreSchema)
     @blp.response(201, StoreSchema)
     def post(self, store_data):
