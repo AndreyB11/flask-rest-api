@@ -2,6 +2,7 @@ import os
 import redis
 from rq import Queue
 from flask import Flask, jsonify
+from flask_cors import CORS
 from flask_smorest import Api
 from flask_jwt_extended import JWTManager
 from flask_migrate import Migrate
@@ -55,6 +56,8 @@ def configure_jwt(jwt: JWTManager):
 def create_app(db_url=None, jwt_secret=None):
     app = Flask(__name__)
     load_dotenv()
+
+    CORS(app, resources={r"/*": {"origins": "*"}})
 
     connection = redis.from_url(os.getenv("REDIS_URL"))
 

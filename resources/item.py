@@ -10,7 +10,7 @@ blp = Blueprint("items", __name__, description="Operations on items")
 
 @blp.route("/items/<int:item_id>")
 class Item(MethodView):
-    @jwt_required()
+    # @jwt_required()
     @blp.response(200, ItemSchema)
     def get(self, item_id):
         try:
@@ -18,7 +18,7 @@ class Item(MethodView):
         except SQLAlchemyError:
             abort(500, message="Something went wrong")
 
-    @jwt_required()
+    # @jwt_required()
     def delete(self, item_id):
         try:
             ItemService.delete_item_by_id(item_id)
@@ -27,7 +27,7 @@ class Item(MethodView):
         except SQLAlchemyError:
             abort(500, message="Something went wrong")
 
-    @jwt_required()
+    # @jwt_required()
     @blp.arguments(ItemUpdateSchema)
     @blp.response(200, ItemSchema)
     def put(self, item_data, item_id):
@@ -39,7 +39,7 @@ class Item(MethodView):
 
 @blp.route("/items")
 class ItemList(MethodView):
-    @jwt_required()
+    # @jwt_required()
     @blp.response(200, ItemSchema(many=True))
     def get(self):
         try:
@@ -47,7 +47,7 @@ class ItemList(MethodView):
         except SQLAlchemyError:
             abort(500, message="Something went wrong")
 
-    @jwt_required()
+    # @jwt_required()
     @blp.arguments(ItemSchema)
     @blp.response(201, ItemSchema)
     def post(self, item_data):

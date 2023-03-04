@@ -31,6 +31,12 @@ class ItemService():
         if "name" in item_data:
             item.name = item_data["name"]
 
+        if "brand" in item_data:
+            item.brand = item_data["brand"]
+
+        if "image" in item_data:
+            item.image = item_data["image"]
+
         db.session.add(item)
         db.session.commit()
 
