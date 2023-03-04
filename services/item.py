@@ -9,7 +9,7 @@ class ItemService():
 
     @staticmethod
     def create_item(item_data):
-        StoreModel.query.get_or_404(item_data["store_id"])
+        # StoreModel.query.get_or_404(item_data["store_id"])
 
         item = ItemModel(**item_data)
         db.session.add(item)

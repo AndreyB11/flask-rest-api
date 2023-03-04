@@ -74,7 +74,7 @@ def create_app(db_url=None, jwt_secret=None):
         "JWT_SECRET", "a1s2d3")
 
     db.init_app(app)
-    migrate = Migrate(app, db)
+    Migrate(app, db)
 
     api = Api(app)
 
